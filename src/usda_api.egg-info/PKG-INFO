@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: usda-api
+Version: 0.1
+Author: Loh YI Kuang
+License: Apache License 2.0
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Provides-Extra: dev

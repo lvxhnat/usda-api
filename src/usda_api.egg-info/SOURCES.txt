@@ -1,0 +1,16 @@
+README.md
+setup.py
+src/usda_api/__init__.py
+src/usda_api.egg-info/PKG-INFO
+src/usda_api.egg-info/SOURCES.txt
+src/usda_api.egg-info/dependency_links.txt
+src/usda_api.egg-info/entry_points.txt
+src/usda_api.egg-info/requires.txt
+src/usda_api.egg-info/top_level.txt
+src/usda_api/scrapers/__init__.py
+src/usda_api/scrapers/esr/__init__.py
+src/usda_api/scrapers/esr/main.py
+src/usda_api/scrapers/esr/schemas/__init__.py
+src/usda_api/scrapers/esr/schemas/response.py
+src/usda_api/scrapers/gats/__init__.py
+src/usda_api/scrapers/psd/__init__.py
