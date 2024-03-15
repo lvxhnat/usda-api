@@ -171,3 +171,11 @@ def get_esr_country_export(
     response: requests.Response = generate_request(ENDPOINT, api_key=api_key)
     country_response: List[ESRCountryExportType] = response.json()
     return clean_country_exports(country_response)
+
+
+if __name__ == '__main__':
+    EIA_API_KEY="Q2QFNdOk3rcYcN3Kdeavmx73tblUnZJg4uiter1W"
+    USDA_FAS_API_KEY_0="f5458abd-198d-402b-b75e-3ce48527b0d2"
+
+    res = get_esr_regions(USDA_FAS_API_KEY_0)
+    print(res)

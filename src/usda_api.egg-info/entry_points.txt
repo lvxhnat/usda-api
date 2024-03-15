@@ -1,2 +1,0 @@
-[console_scripts]
-usda_api = usda_api.entrypoints:main
