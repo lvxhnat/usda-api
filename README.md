@@ -1,6 +1,8 @@
 # Quick Start
 
 ```
+# Create a conda environment
+conda create -n usda-api python=3.10
 # In the root directory
 pip install -e .
 ```
