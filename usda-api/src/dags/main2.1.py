@@ -209,3 +209,30 @@ def forecast_stock_prices(n_day = 0, look_back = 30):
     img = Image.open(file_path)
     
     return img
+
+
+
+
+iface = gr.Interface(fn=analyze_stock_prices, 
+    inputs = [gr.Slider(minimum=0, maximum=365, step=1, label='View previous x days price:')],   
+    outputs=['image'],
+    )
+iface2 = gr.Interface(
+    fn = train_model,
+    inputs = [
+        gr.Slider(minimum = 1, maximum = 100, step = 1, label = 'Number of epochs'),
+        gr.Radio(['SGD', 'Adam'], label = 'Optimizer', value ='SGD')
+    ],
+    outputs=['image']
+)
+iface3 = gr.Interface(
+    fn = forecast_stock_prices,
+    inputs = [
+        gr.Slider(minimum=0, maximum=30, step =1, label='Predict next x days price')]
+    ,
+    outputs= ['image']
+)
+gr.TabbedInterface(
+    [iface, iface2, iface3],
+    tab_names=['Price Analysis', 'Training LSTM', 'Forecasting LSTM']
+).launch()
