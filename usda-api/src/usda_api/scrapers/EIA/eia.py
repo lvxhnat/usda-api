@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 import json
-class Eia:
+class EIA:
     def __init__(self):
         self.endpoint = 'https://api.eia.gov/v2/petroleum/move/wkly/data/?frequency=weekly&data[0]=value&facets[product][]=EPOOXE&sort[0][column]=period&sort[0][direction]=desc&offset=0&length=5000&api_key=6aG1dQxNbZa4qpcFWbegtT4grgjdUBzgOwyk3C27'
         self.info = None

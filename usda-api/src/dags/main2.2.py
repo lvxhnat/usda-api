@@ -26,7 +26,7 @@ from matplotlib.ticker import MaxNLocator
 class MachineLearning:
     def __init__(self):
         obj_yfinance  = yFinance2()
-        stock_data_path = obj_yfinance.get_ticker_history_max_period().get_csv_path()
+        stock_data_path = obj_yfinance.get_csv_path()
         self.data = pd.read_csv(stock_data_path)
         self.look_back = 30
         self.look_next = 1
