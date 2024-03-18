@@ -3,33 +3,56 @@ import pandas as pd
 import numpy as np
 import json
 import yfinance as yf
-
-class yFinance:
-    def __init__(self):
-        self.ticker = 'ZC=F'
+TICKER = ['ZC=F', 'CL=F', 'NG=F', 'DX-Y.NYB']
+class yFinance2:
+    def __init__(self, ticker = 'ZC=F'):
+        self.ticker = ticker
         self.data =["Date", "Open", "High", "Low", "Close", "Adj Close", "Volume", "Tickers", "Market Status"] 
         self.common = None
+        self.info = None
+        self.data_frame = None
         
-    def get_ticker_obj(self):
-        return yf.Ticker(self.ticker)
+    def extract_ticker(self):
+        self.info = yf.Ticker(self.ticker)
+        return self
     
-    def get_ticker(self):
-        info =  self.get_ticker_obj()
-        return info
-    def get_ticker_history_max_period(self):
-        info = self.get_ticker_obj()
+    '''def transform_and_load_ticker_max_period(self, info):
         if self.common is None:
-            info.history(period="max").to_csv('history.csv')
+            info.history(period="max").to_csv(f'{self.ticker}_history.csv')
             pd2 = pd.read_csv('history.csv')
             self.common = pd2
             pd2 = pd2[['Date', 'Open', 'High', 'Low','Close', 'Volume']]
             #pd2.to_csv('history.csv')
             return self
         else:
-            'common exist'
+            print('common exist')
         return self
-    def get_ticker_history_period(self):
-        info = self.get_ticker_obj()
-        return info.history(period="1wk")
+    
+    def transform_and_load_ticker_period(self, info):
+        df = pd.DataFrame(info.history(period="1wk"))
+        print(df.head(5))'''
+    
+    def transform_ticker(self):
+        if self.info is not None:
+            self.data_frame = pd.DataFrame(self.info.history(period="max"))
+        else:
+            print('Please extract data')
+        return self
+            
+    def load_ticker(self):
+        if self.data_frame is not None:
+            self.data_frame.to_csv(f'{self.ticker}_history.csv')
+            print('success')
+        else:
+            print('Please transform data')
+        return self
+    
     def get_csv_path(self):
-        return 'history.csv'
+        return f'{self.ticker}_history.csv'
+            
+        
+if __name__=='__main__':
+    ydata = yFinance2('DX-Y.NYB')
+    ydata.extract_ticker()
+    ydata.transform_ticker()
+    ydata.load_ticker()
