@@ -6,7 +6,7 @@ alembic==1.13.1
 altair==5.2.0
 annotated-types==0.6.0
 anyio==4.2.0
-apache-airflow==2.8.1
+apache-airflow==2.8.3
 apache-airflow-providers-common-io==1.2.0
 apache-airflow-providers-common-sql==1.10.0
 apache-airflow-providers-ftp==3.7.0
