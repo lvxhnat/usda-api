@@ -66,6 +66,25 @@ class WEATHER:
             self.data_frame = pd.concat([self.data_frame, daily_dataframe], ignore_index = True)
         self.data_frame.to_csv('extract_weather/extract_weather.csv')
         return 'extract_weather/extract_weather.csv'
+    
+    def transform_weather(self, path):
+        dir = 'transform_weather'
+        os.makedirs(dir, exist_ok = True)
+        df = pd.read_csv(path)
+        df.drop(columns='Unnamed: 0', inplace=True)
+        df.date = pd.to_datetime(df.date, utc = False)
+        df.set_index('date', inplace = True)
+        df_groups = df.groupby('state')
+        for state, group in df_groups:
+            df_transform =  group[['temperature_2m_max',
+       'temperature_2m_min', 'temperature_2m_mean', 'precipitation_sum']]
+            df_weekly = df_transform.resample('W-MON').mean()
+            df_monthly = df_transform.resample('M').mean()
+            df_weekly.to_csv(f'{dir}/{state}_weekly_weather.csv')
+            df_monthly.to_csv(f'{dir}/{state}_monthly_weather.csv')
+        return dir
+        #print(df.head())
+        
     def load_weather(self, path):
         print('success')
         return

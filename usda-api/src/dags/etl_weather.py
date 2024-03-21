@@ -18,7 +18,11 @@ def etl_weather():
         weather = WEATHER()
         path = weather.extract_weather()
         return path
-
+    @task(task_id=f'transform_weather')
+    def transform_weather(path):
+        weather = WEATHER()
+        path = weather.transform_weather()
+        return path
     @task(task_id=f'load_weather')
     def load_weather(path):
         weather = WEATHER()
@@ -27,8 +31,9 @@ def etl_weather():
         #y_finance_ticker = y_finance_ticker.load_ticker()
         #return
         # Define task flow for each ticker
-        
+       
     path = extract_weather()
-    load_weather(path)
+    path2 = transform_weather(path)
+    load_weather(path2)
 
 etl_weather_dag = etl_weather()
