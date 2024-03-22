@@ -21,7 +21,7 @@ def etl_weather():
     @task(task_id=f'transform_weather')
     def transform_weather(path):
         weather = WEATHER()
-        path = weather.transform_weather()
+        path = weather.transform_weather(path)
         return path
     @task(task_id=f'load_weather')
     def load_weather(path):
