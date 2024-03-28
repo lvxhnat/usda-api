@@ -3,7 +3,7 @@ from airflow.decorators import dag, task
 #from yFinance2 import yFinance2
 #import sys
 #sys.path.append('../yFinance2')
-from src.usda_api.scrapers.yFinance2.yFinance2 import yFinance2
+from usda_api.scrapers.yFinance2.yFinance2 import yFinance2
 #TICKERS = {
 #    'ZC_F': 'ZC=F',
 #    'CL_F': 'CL=F',

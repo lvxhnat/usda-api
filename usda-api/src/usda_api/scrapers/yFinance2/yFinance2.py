@@ -4,116 +4,133 @@ import numpy as np
 import json
 import yfinance as yf
 import os
-'''TICKER = ['ZC=F', 'CL=F', 'NG=F', 'DX-Y.NYB']
-class yFinance2:
-    def __init__(self, ticker = 'ZC=F'):
-        self.ticker = ticker
-        self.data =["Date", "Open", "High", "Low", "Close", "Adj Close", "Volume", "Tickers"] 
-        
-    def extract_ticker(self):
-        info = yf.Ticker(self.ticker)
-        dir = f'../dataset_extract'
-        path = f'../dataset_extract/{self.ticker}.csv'
-        os.makedirs(dir, exist_ok = True)
-        info.history(period='max').to_csv(path)
-        return path
+#from google.cloud import bigquery #
+#from google.oauth2 import service_account #
+#import pandas_gbq #
     
-    def transform_and_load_ticker_max_period(self, info):
-        if self.common is None:
-            info.history(period="max").to_csv(f'{self.ticker}_history.csv')
-            pd2 = pd.read_csv('history.csv')
-            self.common = pd2
-            pd2 = pd2[['Date', 'Open', 'High', 'Low','Close', 'Volume']]
-            #pd2.to_csv('history.csv')
-            return self
-        else:
-            print('common exist')
-        return self
-    
-    def transform_and_load_ticker_period(self, info):
-        df = pd.DataFrame(info.history(period="1wk"))
-        print(df.head(5))
-    
-    def transform_ticker(self, path):
-        dir = f'../dataset_transform'
-        path = f'../dataset_transform/{self.ticker}.csv'
-        os.makedirs(dir, exist_ok = True)        
-        data_frame = pd.read_csv(path)
-        df = data_frame[self.data]
-        df.to_csv(path)
-        return path
-        
-            
-    def load_ticker(self, path):
-        print('success csv file created ')
-        return
-
-    
-    def get_csv_path(self):
-        return f'{self.ticker}_history.csv'
-            
-        
-if __name__=='__main__':
-    ydata = yFinance2('DX-Y.NYB') 
-'''
-    
-    
-from datetime import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 import json
 import yfinance as yf
 import os
-TICKER = ['ZC=F', 'CL=F', 'NG=F', 'DX-Y.NYB']
+from sqlalchemy import create_engine, Table, Column, Integer, String, Date, Float, MetaData, PrimaryKeyConstraint
+from sqlalchemy.dialects.postgresql import insert
+TICKER = {'ZC=F':'Corn', 'CL=F':'Oil', 'NG=F': 'Gas' , 'DX-Y.NYB' : 'USD'}
 class yFinance2:
     def __init__(self):
         self.data =["Date", "Open", "High", "Low", "Close", "Volume"] 
         self.TICKER = TICKER
+        #self.credentials = service_account.Credentials.from_service_account_file('/Users/jiayuan/Desktop/project/usda-api/src/usda_api/scrapers/google.json') #
+        #self.project_id = 'airflow-418412' #
+        self.engine = create_engine('postgresql://postgres:Password*1@35.239.18.20/jy')
+    
+    ##EXTRACT##
+    def extract(self, start, dir):
+        os.makedirs(dir, exist_ok=True)
+        for t in self.TICKER.keys():
+             path = f'{dir}/{t}.csv'
+             info = yf.Ticker(t)
+             info.history(start = start, end = datetime.now().strftime("%Y-%m-%d")).to_csv(path)
+        return
+                     
     def extract_ticker(self):
         dir = f'./extract_yfinance'
-        os.makedirs(dir, exist_ok = True)
-        for t in self.TICKER:
-            path = f'./extract_yfinance/{t}.csv'
-            info = yf.Ticker(t)
-            info.history(period='max').to_csv(path)
+        self.extract("2000-08-30", dir)
         return dir
     
-    '''def transform_and_load_ticker_max_period(self, info):
-        if self.common is None:
-            info.history(period="max").to_csv(f'{self.ticker}_history.csv')
-            pd2 = pd.read_csv('history.csv')
-            self.common = pd2
-            pd2 = pd2[['Date', 'Open', 'High', 'Low','Close', 'Volume']]
-            #pd2.to_csv('history.csv')
-            return self
-        else:
-            print('common exist')
-        return self
+    def extract_ticker_weekly(self):
+        dir = f'./extract_yfinance_weekly'
+        start_date = str(datetime.now().date() - timedelta(days= 7))
+        self.extract(start_date, dir)
+        return dir
     
-    def transform_and_load_ticker_period(self, info):
-        df = pd.DataFrame(info.history(period="1wk"))
-        print(df.head(5))'''
     
-    def transform_ticker(self, path):
-        dir = f'./transform_yfinance'
-        os.makedirs(dir, exist_ok = True)        
-        for t in self.TICKER:
+    
+    ##TRANSFORM##
+    def transform(self, path, dir):
+        os.makedirs(dir, exist_ok = True)
+        df_all = pd.DataFrame()       
+        for t in self.TICKER.keys():
             path_temp = path + '/' + t + '.csv'
             data_frame = pd.read_csv(path_temp)
             df = data_frame[self.data]
-            path2 = dir + '/' + t + '.csv'
-            df.to_csv(path2)
-        return dir
-        
-            
-    def load_ticker(self, path):
-        print('success csv file created ')
-        return
-
+            df['Ticker_name'] = self.TICKER[t]
+            df_all = pd.concat([df_all, df], axis=0, ignore_index=True)
+        path2 = dir + '/' + 'all' + '.csv'
+        df_all.to_csv(path2, index = False)
+        return path2
     
-    def get_csv_path(self):
-        return f'{self.ticker}_history.csv'
-            
+    def transform_ticker(self, path):
+        dir = f'./transform_yfinance'
+        path2 = self.transform(path, dir)
+        return path2
+    
+    def transform_ticker_weekly(self, path):
+        dir = f'./transform_yfinance_weekly'
+        path2 = self.transform(path, dir)
+        return path2
+    
+        
+    ##LOAD##       
+    def load_ticker(self, path):
+
+        metadata = MetaData()
+        columns = [
+            Column('Ticker_name', String, primary_key=True),
+            Column('Date', Date, primary_key = True),
+            Column('Open', Float) ,
+            Column('High', Float), 
+            Column('Low', Float), 
+            Column('Close', Float) ,
+            Column('Volume', Integer)
+        ]
+
+        table = Table('yfinance', metadata, *columns, PrimaryKeyConstraint('Ticker_name', 'Date'))
+        
+        metadata.create_all(self.engine)
+
+        data_frame = pd.read_csv(path, parse_dates=["Date"], index_col=False)
+        data_frame.Date = pd.to_datetime(data_frame.Date, utc = True)
+        data_frame.Date = data_frame.Date.dt.date
+        data_frame.to_sql('yfinance', self.engine, if_exists='append', index =False)
+        return 'yfinance'
+    
+    def load_ticker_weekly(self, path):
+        metadata = MetaData()
+        table = Table('yfinance', metadata, autoload=True, autoload_with=self.engine)
+        data_frame = pd.read_csv(path, parse_dates=["Date"], index_col=False)
+        data_frame.Date = pd.to_datetime(data_frame.Date, utc = True)
+        data_frame.Date = data_frame.Date.dt.date
+        data_to_insert = data_frame.to_dict('records')
+        with self.engine.connect() as conn:
+            with conn.begin():
+                for data in data_to_insert:
+                    upsert_stmt = insert(table).values(**data).\
+                        on_conflict_do_update(
+                            index_elements= ['Ticker_name', 'Date'],
+                            set_={c.name: c for c in insert(table).excluded if c.name not in ['Ticker_name', 'Date']}
+                        )
+                    conn.execute(upsert_stmt)
+        return 'yfinance'
+
+    def transform_ticker_corn(self):
+        #metadata = MetaData()
+        #metadata = MetaData(bind = self.engine)
+        
+        # yfinance_table = Table('yfinance', metadata, autoload = True, autoload_with=self.engine)
+        # statement = select([yfinance_table.c.Open, yfinance_table.c.Close, yfinance_table.c.High, yfinance_table.c.Low, yfinance_table.c.Volume]) \
+        #     .where(yfinance_table.c.Ticker == 'Corn')
+        yfinance_table = self.engine.execute(  """
+                                             SELECT "Date", "Open", "Close", "High", "Low", "Volume" From yfinance WHERE "Ticker_name" ='Corn'
+                                             """)
+        df = pd.DataFrame(yfinance_table.fetchall(), columns=yfinance_table.keys())
+        os.makedirs('./Corn_quote', exist_ok=True)
+        df.to_csv('./Corn_quote/corn_quote.csv', index = False)
+        return './Corn_quote/corn_quote.csv'
         
 if __name__=='__main__':
-    ydata = yFinance2('DX-Y.NYB')
+    ydata = yFinance2()
+    path = ydata.extract_ticker_weekly()
+    path2 = ydata.transform_ticker_weekly(path)
+    print(ydata.load_ticker_weekly(path2))

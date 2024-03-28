@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from airflow.decorators import dag, task
-from src.usda_api.scrapers.WEATHER.weather import WEATHER
+from usda_api.scrapers.WEATHER.weather import WEATHER
 
 
 default_args = {
@@ -33,7 +33,7 @@ def etl_weather():
         # Define task flow for each ticker
        
     path = extract_weather()
-    path2 = transform_weather(path)
-    load_weather(path2)
+    #path2 = transform_weather(path)
+    load_weather(path)
 
 etl_weather_dag = etl_weather()
