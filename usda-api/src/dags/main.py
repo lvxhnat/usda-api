@@ -26,10 +26,11 @@ from matplotlib.ticker import MaxNLocator
 class MachineLearning:
     def __init__(self, path):
         #obj_yfinance  = yFinance2()
-        #stock_data_path = obj_yfinance.get_csv_path()
-        df = pd.read_csv(path, parse_dates=['Date'])
+        self.path = path
+        stock_data_path = path #obj_yfinance.get_csv_path()
+        df = pd.read_csv(stock_data_path, parse_dates = ['Date'])
         df.Date = pd.to_datetime(df.Date)
-        df.sort_values(by='Date', ascending=True, inplace=True)
+        df.sort_values(by='Date', ascending=True, inplace = True)
         self.data = df
         self.look_back = 30
         self.look_next = 1
@@ -38,6 +39,14 @@ class MachineLearning:
         self.train = self.data.iloc[0: int(len(self.data)*self.train_test_split)]
         self.val = self.data.iloc[int(len(self.data)*self.train_test_split): ]
         self.defualt_weights_path = 'training_1/m.weights.h5'
+    
+    def reload(self):
+        stock_data_path = self.path #obj_yfinance.get_csv_path()
+        df = pd.read_csv(stock_data_path, parse_dates = ['Date'])
+        df.Date = pd.to_datetime(df.Date)
+        df.sort_values(by='Date', ascending=True, inplace=True)
+        self.data = df
+        return
     
     def analyze_stock_prices(self, num_view):
         num = -num_view
@@ -184,6 +193,7 @@ class MachineLearning:
         iface = gr.Interface(fn=self.analyze_stock_prices, 
             inputs = [gr.Slider(minimum=0, maximum=365, step=1, label='View previous x days price:')],   
             outputs=['image'],
+            allow_flagging= 'never'
             )
         iface2 = gr.Interface(
             fn = self.train_model,
@@ -191,21 +201,37 @@ class MachineLearning:
                 gr.Slider(minimum = 1, maximum = 100, step = 1, label = 'Number of epochs'),
                 gr.Radio(['SGD', 'Adam'], label = 'Optimizer', value ='SGD')
             ],
-            outputs=['image']
+            outputs=['image'],
+            allow_flagging= 'never'
         )
         iface3 = gr.Interface(
             fn = self.forecast_stock_prices,
             inputs = [
                 gr.Slider(minimum=0, maximum=30, step =1, label='Predict next x days price')]
             ,
-            outputs= ['image']
+            outputs= ['image'],
+            allow_flagging = "never"
         )
-        gr.TabbedInterface(
-            [iface, iface2, iface3],
-            tab_names=['Price Analysis', 'Training LSTM', 'Forecasting LSTM']
-        ).launch(share=True)
+        
+
+        with gr.Blocks() as demo:
+            with gr.Column( elem_classes= ["container"]):
+                gr.TabbedInterface([iface, iface2, iface3],
+                tab_names=['Price Analysis', 'Training LSTM', 'Forecasting LSTM'])
+            
+            with gr.Row('Reload'):
+                reload_button = gr.Button('Reload')
+                
+            reload_button.click(
+                self.reload,
+                [],
+                []
+            )
+                    
+        
+        demo.launch(share = True)
     
         
 if __name__ == '__main__':
-    ml = MachineLearning('../Corn_quote/corn_quote.csv')
-    ml.gradio()         
+    ml = MachineLearning('./Corn_quote/corn_quote.csv')
+    ml.gradio()       
