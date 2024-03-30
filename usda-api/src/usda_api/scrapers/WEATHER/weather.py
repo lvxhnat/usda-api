@@ -161,7 +161,19 @@ class WEATHER:
                             set_={c.name: c for c in insert(table).excluded if c.name not in ['State', 'Date']}
                         ) 
                     conn.execute(upsert_stmt)
-        return 'weather' 
+        return 'weather'
+    
+    def transform_weather_weekly(self):
+
+        weekly_temperature = self.engine.execute("""
+                                            SELECT "State", "Date", "Temperature_2m_mean","Temperature_2m_min", "Temperature_2m_max", "Precipitation_sum"
+                                            FROM weather WHERE "Date" BETWEEN (NOW() - INTERVAL '1 year')::DATE AND NOW()::DATE
+                                            """) 
+        
+        df = pd.DataFrame(weekly_temperature.fetchall(), columns=weekly_temperature.keys())
+        os.makedirs('Weather_quote', exist_ok= True)
+        df.to_csv('./Weather_quote/weather_quote.csv', index = False)
+        return'./Weather_quote/weather_qutoe.csv'
         
 
 if __name__ == "__main__":
