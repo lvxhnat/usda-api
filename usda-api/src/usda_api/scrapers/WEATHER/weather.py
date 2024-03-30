@@ -163,7 +163,7 @@ class WEATHER:
                     conn.execute(upsert_stmt)
         return 'weather'
     
-    def transform_weather_weekly(self):
+    def transform_weather_analysis(self):
 
         weekly_temperature = self.engine.execute("""
                                             SELECT "State", "Date", "Temperature_2m_mean","Temperature_2m_min", "Temperature_2m_max", "Precipitation_sum"
