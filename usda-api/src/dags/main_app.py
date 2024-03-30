@@ -1,31 +1,3 @@
-from usda_api.scrapers.esr.main import get_esr_regions
-from usda_api.scrapers.esr.main import get_esr_countries
-from usda_api.scrapers.esr.main import get_esr_commodities
-from usda_api.scrapers.esr.main import get_esr_unitsofmeasure
-from usda_api.scrapers.esr.main import get_esr_allcountries_export
-from usda_api.scrapers.esr.main import get_esr_country_export
-
-
-from usda_api.scrapers.psd.main import get_psd_countries
-from usda_api.scrapers.psd.main import get_psd_unitsofmeasure
-from usda_api.scrapers.psd.main import get_psd_commodities
-from usda_api.scrapers.psd.main import get_psd_commodityattributes
-from usda_api.scrapers.psd.main import get_psd_countryforecast
-
-from airflow.decorators import dag, task, task_group
-from datetime import datetime, timedelta
-
-    
-
-default_args = {
-    'owner' : 'main',
-    'start_date' : datetime(2024,1,1),
-    'retries': 1,
-    'retries_interval': timedelta(minutes=0.5)
-}
-
-
-API='d317a077-50d7-4949-9958-42d7cb97a1d3'
 from main_ml import MachineLearning
 from main_weather import WeatherAnalysis
 from dash import Dash, Input, Output,State, dcc, no_update, html
