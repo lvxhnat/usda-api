@@ -1,36 +1,99 @@
 from main_ml import MachineLearning
 from main_weather import WeatherAnalysis
 from dash import Dash, Input, Output,State, dcc, no_update, html
-
+import dash_bootstrap_components as dbc
 class App:
     def __init__(self):
-        self.app = Dash(__name__)
+        self.app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+        SIDEBAR_STYLE ={      
+                "position": "fixed",
+                "top": 0,
+                "left": 0,
+                "bottom": 0,
+                "width": "10rem",
+                "padding": "2rem 1rem",
+                "background-color": "#f8f9fa",
+            }
+        CONTENT_STYLE = {
+                "margin-left": "18rem",
+                "margin-right": "2rem",
+                "padding": "2rem 1rem",
+            }
+        self.sidebar = html.Div(
+            [
+                html.H4("Dashboard", style={'font-size': '20px'}),
+                html.Hr(),
+                html.P(
+                    "Overview",  style={'font-size': '15px'}
+                ),
+                dbc.Nav(
+                    [
+                        dbc.NavLink("Home", href="/", active="exact"),
+                        dbc.NavLink("Weather", href="/Weather", active="exact"),
+                        dbc.NavLink("LSTM analysis", href="/LSTM_analysis", active="exact"),
+                    ],
+                    vertical=True,
+                    pills=True,
+                ),
+            ],
+            style= SIDEBAR_STYLE,
+        )
+        
+        self.content = html.Div(id="page-content", children=[], style=CONTENT_STYLE)
+        
         self.setup_app_layout()
         self.setup_callbacks()
         
+        
     def setup_app_layout(self):
         self.app.layout = html.Div([
-            html.Div([
-                html.H1('Weather Analysis Report'),
-                dcc.Tabs(id='tabs0', value = 'tab0-1', children= [
-                    dcc.Tab(label='Precipitation Analysis', value='tab0-1'),
-                    dcc.Tab(label= 'Temperature Analysis', value = 'tab0-2')
-                ]),
-                html.Div(id='tabs0-content')
-            ]),
-            html.Div([
-                html.H1('Machine Learning with LSTM'),
-                dcc.Tabs(id="tabs", value='tab-1', children=[
-                    dcc.Tab(label='Analyze Corn Chart', value='tab-1'),
-                    dcc.Tab(label='Training LSTM', value='tab-2'),
-                    dcc.Tab(label='Forecasting LSTM', value='tab-3'),
-                ]),
-                html.Div(id='tabs-content'),
-            ]),
+            dcc.Location(id='url'),
+            self.sidebar,
+            self.content
         ])
         
         
     def setup_callbacks(self):
+        @self.app.callback(
+            Output("page-content", "children"),
+            [Input("url", "pathname")]
+        )
+        
+        def render_page_content(pathname):
+            if pathname == "/":
+                return [
+                    html.Div([
+                        html.H1('Corn Analysis')
+                    ])
+                ]
+            elif pathname == "/Weather":
+                return html.Div([
+                    html.H1('Weather Analysis Report'),
+                    dcc.Tabs(id='tabs0', value = 'tab0-1', children= [
+                        dcc.Tab(label='Precipitation Analysis', value='tab0-1'),
+                        dcc.Tab(label= 'Temperature Analysis', value = 'tab0-2')
+                    ]),
+                    html.Div(id='tabs0-content')
+                ]),
+            elif pathname == "/LSTM_analysis":
+                return html.Div([
+                    html.H1('Machine Learning  with LSTM'),
+                    dcc.Tabs(id="tabs", value='tab-1', children=[
+                        dcc.Tab(label='Analyze Corn Chart', value='tab-1'),
+                        dcc.Tab(label='Training LSTM', value='tab-2'),
+                        dcc.Tab(label='Forecasting LSTM', value='tab-3'),
+                    ]),
+                    html.Div(id='tabs-content'),
+                ]),
+            else:
+                return dbc.Jumbotron(
+                [
+                    html.H1("404: Not found"),
+                    html.Hr(),
+                    html.P(f"The pathname {pathname} was not recognised..."),
+                ]
+            )
+        
         @self.app.callback(
             Output('tabs0-content', 'children'),
             Input('tabs0', 'value')

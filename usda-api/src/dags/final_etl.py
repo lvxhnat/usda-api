@@ -5,7 +5,7 @@ from airflow.decorators import dag, task
 from usda_api.scrapers.yFinance2.yFinance2 import yFinance2
 from usda_api.scrapers.WEATHER.weather import WEATHER
 
-from main import MachineLearning
+
 default_args = {
     'owner': 'jy',
     'start_date': datetime(2024, 1, 1),
