@@ -48,11 +48,17 @@ def etl_final():
         yfinance = yFinance2()
         path = yfinance.transform_ticker_corn()
         return path
-    @task(task_id='analyse_yfinance_corn')
-    def analyse_yfinance_corn(path):
-        ml = MachineLearning(path)
-        ml.gradio()
-        return
+    # @task(task_id='analyse_yfinance_corn')
+    # def analyse_yfinance_corn(path):
+    #     ml = MachineLearning(path)
+    #     ml.gradio()
+    #     return
+    
+    @task(task_id='transfrom_weather_analysis')
+    def transform_weather_analysis(path):
+        weather = WEATHER()
+        path = weather.transform_weather_analysis()
+        return path
 
     @task(task_id='query')
     def query(*args):
@@ -67,7 +73,8 @@ def etl_final():
     path2_weather = load_weather_weekly(path_weather)
     
     path_yfinance_corn = transform_yfinance_corn(path3_yfinance)
-    analyse_yfinance_corn(path_yfinance_corn)
+    path_weather_analysis = transform_weather_analysis(path2_weather)
+    #analyse_yfinance_corn(path_yfinance_corn)
 
     query(path3_yfinance, path2_weather)
 
