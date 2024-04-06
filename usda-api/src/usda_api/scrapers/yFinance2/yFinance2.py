@@ -128,6 +128,21 @@ class yFinance2:
         os.makedirs('./Corn_quote', exist_ok=True)
         df.to_csv('./Corn_quote/corn_quote.csv', index = False)
         return './Corn_quote/corn_quote.csv'
+    
+    def transform_ticker_oil(self):
+        #metadata = MetaData()
+        #metadata = MetaData(bind = self.engine)
+        
+        # yfinance_table = Table('yfinance', metadata, autoload = True, autoload_with=self.engine)
+        # statement = select([yfinance_table.c.Open, yfinance_table.c.Close, yfinance_table.c.High, yfinance_table.c.Low, yfinance_table.c.Volume]) \
+        #     .where(yfinance_table.c.Ticker == 'Corn')
+        yfinance_table = self.engine.execute(  """
+                                             SELECT "Date", "Open", "Close", "High", "Low", "Volume" From yfinance WHERE "Ticker_name" ='Oil'
+                                             """)
+        df = pd.DataFrame(yfinance_table.fetchall(), columns=yfinance_table.keys())
+        os.makedirs('./Ethanol_quote', exist_ok=True)
+        df.to_csv('./Ethanol_quote/oil_quote.csv', index = False)
+        return './Ethanol_quote/oil_quote.csv'
         
 if __name__=='__main__':
     ydata = yFinance2()

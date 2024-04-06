@@ -4,6 +4,7 @@ from airflow.decorators import dag, task
 
 from usda_api.scrapers.yFinance2.yFinance2 import yFinance2
 from usda_api.scrapers.WEATHER.weather import WEATHER
+from usda_api.scrapers.EIA.eia import EIA
 
 
 default_args = {
@@ -42,23 +43,40 @@ def etl_final():
     def load_weather_weekly(path):
         weather= WEATHER()
         return weather.load_weather_weekly(path)
-    
-    @task(task_id='transform_yfinance_corn')
+
+    @task(task_id='extract_and_transform_eia_weekly')
+    def extract_and_transform_eia_weekly():
+        eia = EIA()
+        return eia.extract_and_transform_eia_weekly()
+    @task(task_id = 'load_eia_weekly')
+    def load_eia_weekly(path):
+        eia = EIA()
+        return eia.load_eia_weekly(path)
+
+
+    @task(task_id='transform_yfinance_corn_analysis')
     def transform_yfinance_corn(path):
         yfinance = yFinance2()
         path = yfinance.transform_ticker_corn()
         return path
-    # @task(task_id='analyse_yfinance_corn')
-    # def analyse_yfinance_corn(path):
-    #     ml = MachineLearning(path)
-    #     ml.gradio()
-    #     return
-    
+    '''@task(task_id='analyse_yfinance_corn')
+    def analyse_yfinance_corn(path):
+        ml = MachineLearning(path)
+        ml.gradio()
+        return '''
+
     @task(task_id='transfrom_weather_analysis')
     def transform_weather_analysis(path):
         weather = WEATHER()
         path = weather.transform_weather_analysis()
         return path
+    @task(task_id='transform_ethanol_analysis')
+    def transform_ethanol_analysis(*path):
+        yfinance = yFinance2()
+        path = yfinance.transform_ticker_oil()
+        eia = EIA()
+        path2 = eia.query_eia()
+        return path + path2
 
     @task(task_id='query')
     def query(*args):
@@ -71,11 +89,15 @@ def etl_final():
 
     path_weather = extract_weather_weekly()
     path2_weather = load_weather_weekly(path_weather)
-    
+   
+    path_eia = extract_and_transform_eia_weekly()
+    path2_eia = load_eia_weekly(path_eia)
+
     path_yfinance_corn = transform_yfinance_corn(path3_yfinance)
     path_weather_analysis = transform_weather_analysis(path2_weather)
+    path_ethanol_analysis = transform_ethanol_analysis(path3_yfinance, path2_eia)
     #analyse_yfinance_corn(path_yfinance_corn)
-
-    query(path3_yfinance, path2_weather)
+    
+    query(path_yfinance_corn, path_weather_analysis, path_ethanol_analysis)
 
 etl_dag = etl_final()

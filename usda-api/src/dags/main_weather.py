@@ -54,46 +54,60 @@ class WeatherAnalysis:
                 'yanchor':'top',
                 'x':0.5},)
         return fig
-        
     
+
     def create_temperature_plot(self):
         df = self.df
         states = self.states
         code = {
-        'Iowa' : 'IA',
-        'Indiana' : 'IN',
-        'Illinois' : 'IL',
-        'Nebraskda' : 'NE',
-        'South Dakota' : 'SD',
-        'Minnesota' : 'MN'
+            'Iowa': 'IA',
+            'Indiana': 'IN',
+            'Illinois': 'IL',
+            'Nebraska': 'NE',  # Corrected from 'Nebraskda' to 'Nebraska'
+            'South Dakota': 'SD',
+            'Minnesota': 'MN'
         }
-        df_precipitation_state = df.groupby("State").mean('Precipitation_sum').reset_index()
-        df_precipitation_state['Code'] = df_precipitation_state['State'].map(code)
-        
-        fig3 = make_subplots(rows=len(states), cols=1, subplot_titles = states)
-        color_map ={
-            'Temperature_2m_min' : 'blue',
-            #'Temperature_2m_mean' : 'grey',
-            'Temperature_2m_max' : 'red'
+
+        fig3 = make_subplots(rows=len(states), cols=1, subplot_titles=states)
+        color_map = {
+            'Temperature_2m_min': 'blue',
+            'Temperature_2m_max': 'red',
+            'Harvest Period': 'green'  # Color for the harvest period
         }
         show_legend = True
-        for i, state in enumerate(states, start = 1):
-            df_temp = df[df['State'] == state]
-            df_temp.dropna(inplace = True)
 
-            df_long = df_temp.melt(id_vars=['Date'], value_vars=['Temperature_2m_min', 'Temperature_2m_max'], #'Temperature_2m_mean',
-                            var_name='Temperature_Type', value_name='Temperature')
-            
+        for i, state in enumerate(states, start=1):
+            df_temp = df[df['State'] == state]
+            df_temp.dropna(inplace=True)
+
+            # Determine harvest period (September to November)
+            df_temp['Month'] = df_temp['Date'].dt.month
+            harvest_df = df_temp[df_temp['Month'].isin([9, 10, 11])]
+
+            df_long = df_temp.melt(id_vars=['Date'], value_vars=['Temperature_2m_min', 'Temperature_2m_max'],
+                                var_name='Temperature_Type', value_name='Temperature')
+
             for temp_type in df_long['Temperature_Type'].unique():
                 df_type = df_long[df_long['Temperature_Type'] == temp_type]
-                fig3.add_trace(go.Scatter(x=df_type.Date, y= df_type.Temperature, mode ='lines', name = temp_type, line=dict(color=color_map[temp_type]), showlegend=show_legend),
+                fig3.add_trace(go.Scatter(x=df_type.Date, y=df_type.Temperature, mode='lines', name=temp_type,
+                                        line=dict(color=color_map[temp_type]), showlegend=show_legend),
                             row=i, col=1)
-            show_legend = False
-            
 
-        fig3.update_layout(height=300*len(states), title_text="Analysis of Min and Max Temperature by State")
+            # Add harvest period data
+            if not harvest_df.empty:
+                fig3.add_trace(go.Scatter(x=harvest_df.Date, y=harvest_df['Temperature_2m_min'], mode='lines', name='Harvest Period',
+                                        line=dict(color=color_map['Harvest Period']), showlegend=show_legend),
+                            row=i, col=1)
+                fig3.add_trace(go.Scatter(x=harvest_df.Date, y=harvest_df['Temperature_2m_max'], mode='lines', name='Harvest Period',
+                                        line=dict(color=color_map['Harvest Period']), showlegend=False),  # Hide legend for the second trace
+                            row=i, col=1)
+
+            show_legend = False  # To avoid repeating legend entries
+
+        fig3.update_layout(height=300 * len(states), title_text="Analysis of Min and Max Temperature by State During Harvest Period")
         fig3.update_yaxes(title_text="Temperature (°C)")
         return fig3
+
 
 
 

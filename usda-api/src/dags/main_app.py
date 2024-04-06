@@ -1,5 +1,6 @@
 from main_ml import MachineLearning
 from main_weather import WeatherAnalysis
+from main_ethanol import Ethanol
 from dash import Dash, Input, Output,State, dcc, no_update, html
 import dash_bootstrap_components as dbc
 class App:
@@ -30,6 +31,7 @@ class App:
                     [
                         dbc.NavLink("Home", href="/", active="exact"),
                         dbc.NavLink("Weather", href="/Weather", active="exact"),
+                        dbc.NavLink("Ethanol", href="/Ethanol", active="exact"),
                         dbc.NavLink("LSTM analysis", href="/LSTM_analysis", active="exact"),
                     ],
                     vertical=True,
@@ -75,9 +77,18 @@ class App:
                     ]),
                     html.Div(id='tabs0-content')
                 ]),
+            
+            elif pathname == "/Ethanol":
+                return html.Div([
+                    html.H1('Ethanol Analysis Report'),
+                    dcc.Graph(figure = Ethanol().create_ethanol_plot())
+                    
+                    ])
+                
+                
             elif pathname == "/LSTM_analysis":
                 return html.Div([
-                    html.H1('Machine Learning  with LSTM'),
+                    html.H1('Machine Learning with LSTM'),
                     dcc.Tabs(id="tabs", value='tab-1', children=[
                         dcc.Tab(label='Analyze Corn Chart', value='tab-1'),
                         dcc.Tab(label='Training LSTM', value='tab-2'),
