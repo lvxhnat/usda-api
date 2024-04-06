@@ -13,10 +13,10 @@ class App:
                 "bottom": 0,
                 "width": "10rem",
                 "padding": "2rem 1rem",
-                "background-color": "#f8f9fa",
+                "background-color":"rgba(211, 211, 211, 0.5)",
             }
         CONTENT_STYLE = {
-                "margin-left": "18rem",
+                "margin-left": "10rem",
                 "margin-right": "2rem",
                 "padding": "2rem 1rem",
             }
@@ -65,9 +65,30 @@ class App:
             if pathname == "/":
                 return [
                     html.Div([
-                        html.H1('Corn Analysis')
-                    ])
-                ]
+                    html.Div([
+                        html.H1('Corn Analysis', style={'color': 'white', 'textAlign': 'center'}),
+                        html.Hr(),
+                        html.P("This dashboard provides an in-depth analysis of corn market trends, including historical price movements, production forecasts, and weather impact assessments.", style={'color': 'white', 'textAlign': 'center', 'padding': '20px'}),
+                        html.P("Explore interactive charts and insights to make informed decisions.", style={'color': 'white', 'textAlign': 'center', 'padding': '20px'}),
+                    ], style={
+                        'backgroundColor': 'rgba(0, 0, 0, 0.5)',  # Semi-transparent black overlay
+                        'position': 'absolute',
+                        'top': 0,
+                        'left': 0,
+                        'width': '100%',
+                        'height': '100%',
+                        'display': 'flex',
+                        'flexDirection': 'column',
+                        'justifyContent': 'center',
+                        'alignItems': 'center',
+                    }),
+                ], style={
+                    'backgroundImage': f'url({self.app.get_asset_url("corn.jpg")})',
+                    'backgroundSize': 'cover',
+                    'backgroundPosition': 'center center',
+                    'height': '100vh',
+                    'position': 'relative',  # Needed to position the overlay correctly
+                })]
             elif pathname == "/Weather":
                 return html.Div([
                     html.H1('Weather Analysis Report'),
