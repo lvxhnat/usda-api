@@ -66,8 +66,8 @@ class EIA:
     def extract_and_transform_eia(self):
         soup = self.extract_eia()
         df = self.transform_eia(soup)
-        os.makedirs('transform_eia', exist_ok= True)
-        file_name = 'transform_eia/transform_eia.csv'
+        os.makedirs('./data/transform_eia', exist_ok= True)
+        file_name = './data/transform_eia/transform_eia.csv'
         df.rename(columns = {'date':'Date', 'value' : 'Value'}, inplace = True)
         df.to_csv(file_name, index = False)
         return file_name
@@ -75,8 +75,8 @@ class EIA:
         soup = self.extract_eia()
         df = self.transform_eia(soup)
         df = df.tail(1)
-        os.makedirs('transform_eia_weekly', exist_ok= True)
-        file_name = 'transform_eia_weekly/transform_eia_weekly.csv'
+        os.makedirs('./data/transform_eia_weekly', exist_ok= True)
+        file_name = './data/transform_eia_weekly/transform_eia_weekly.csv'
         df.rename(columns = {'date':'Date', 'value' : 'Value'}, inplace = True)
         df.to_csv(file_name, index = False)
         return file_name
@@ -86,7 +86,7 @@ class EIA:
         metadata = MetaData()
         columns = [
             Column('Date', Date, primary_key = True),
-            Column('Value', String, primary_key=True),
+            Column('Value', String),
         ]
 
         table = Table('eia', metadata, *columns, PrimaryKeyConstraint('Date'))
@@ -128,9 +128,9 @@ class EIA:
                                              SELECT "Date","Value" From eia
                                              """)
         df = pd.DataFrame(yfinance_table.fetchall(), columns=yfinance_table.keys())
-        os.makedirs('./Ethanol_quote', exist_ok=True)
-        df.to_csv('./Ethanol_quote/eia_quote.csv', index = False)
-        return './Ethanol_quote/eia_quote.csv'
+        os.makedirs('./data/Ethanol_quote', exist_ok=True)
+        df.to_csv('./data/Ethanol_quote/eia_quote.csv', index = False)
+        return './data/Ethanol_quote/eia_quote.csv'
     
 
 

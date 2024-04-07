@@ -6,9 +6,9 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import pandas as pd
 class WeatherAnalysis:
-    def __init__(self, path):
+    def __init__(self):
         self.states = ["Iowa", "Illinois","South Dakota" ,"Nebraska", "Minnesota", "Indiana"]
-        df = pd.read_csv(path, parse_dates= ['Date'])
+        df = pd.read_csv('../data/Weather_quote/weather_quote.csv', parse_dates= ['Date'])
         df.Date = pd.to_datetime(df.Date)
         self.df = df
 

@@ -1,0 +1,54 @@
+import requests
+import ast
+import pandas as pd
+import plotly.express as px
+
+class EsrAnalysis:
+    def __init__(self):
+        data_frame = pd.read_csv('../data/Esr_quote/esr_quote_yearly.csv', parse_dates= ['Date'])
+        data_frame.Date = pd.to_datetime(data_frame.Date)
+        self.df = data_frame
+    def create_export_country_plot(self):
+        PARAMS = {"API_KEY": "f5458abd-198d-402b-b75e-3ce48527b0d2"}
+        url = f"https://apps.fas.usda.gov/OpenData"
+        countries_endpoint = "/api/esr/countries"
+        countries_response = requests.get(
+            url=url + countries_endpoint, headers=PARAMS).text
+        df = pd.DataFrame.from_dict(ast.literal_eval(countries_response.replace("null", '"null"')))
+        df['countryDescription'] = df['countryDescription'].str.rstrip()
+        map = df.set_index("countryDescription")[['gencCode']].to_dict()['gencCode']
+        df = self.df
+        df['Year'] = df.Date.dt.year
+        df['Month'] = df.Date.dt.month
+        df_m = df.groupby(['Year', 'Month', 'Country']).sum('weeklyExports').reset_index()
+        df_m['code'] = df_m['Country'].map(map)
+        df_m['Time'] = df_m['Month'].astype(str) + '-' + df_m['Year'].astype(str)
+
+        fig = px.choropleth(df_m, 
+                            locations="code",
+                            color="weeklyExports", # lifeExp is a column of gapminder
+                            hover_name="Country", # column to add to hover information
+                            color_continuous_scale=px.colors.sequential.Reds,
+                            labels = {'weeklyExports' : 'MonthlyExport (Metrics Ton)'},
+                            animation_frame= 'Time',)
+        fig.update_layout(
+                    height= 800,
+                    title={'text':'Corn Export from the USA Over Time',
+                        'xanchor':'center',
+                        'yanchor':'top',
+                        'x':0.5},)
+        return fig
+    
+    def create_export_weekly_plot(self):
+        df = self.df
+        df_week = df.groupby(['Date']).sum('weeklyExports').reset_index()
+        fig = px.line(df_week, x='Date', y = 'weeklyExports', labels={'weeklyExports' : 'Weekly Export (Metric Tons)'})
+        fig.update_layout(
+                    height= 600,
+                    title={'text':'Total Weekly Export of Corn from the USA',
+                        'xanchor':'center',
+                        'yanchor':'top',
+                        'x':0.5},)
+        return fig
+    
+    

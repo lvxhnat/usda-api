@@ -1,6 +1,7 @@
 from main_ml import MachineLearning
 from main_weather import WeatherAnalysis
 from main_ethanol import Ethanol
+from main_esr import EsrAnalysis
 from dash import Dash, Input, Output,State, dcc, no_update, html
 import dash_bootstrap_components as dbc
 class App:
@@ -30,6 +31,7 @@ class App:
                 dbc.Nav(
                     [
                         dbc.NavLink("Home", href="/", active="exact"),
+                        dbc.NavLink("Corn Export", href="/Corn_Export", active="exact"),
                         dbc.NavLink("Weather", href="/Weather", active="exact"),
                         dbc.NavLink("Ethanol", href="/Ethanol", active="exact"),
                         dbc.NavLink("LSTM analysis", href="/LSTM_analysis", active="exact"),
@@ -89,6 +91,16 @@ class App:
                     'height': '100vh',
                     'position': 'relative',  # Needed to position the overlay correctly
                 })]
+            elif pathname == "/Corn_Export":
+                return html.Div([
+                    html.H1('Corn Export Report'),
+                    dcc.Tabs(id='tabs2', value = 'tab0-1', children= [
+                        dcc.Tab(label='Export Contries Analysis', value='tab0-1'),
+                        dcc.Tab(label= 'Weekly Export Analysis', value = 'tab0-2')
+                    ]),
+                    html.Div(id='tabs2-content')
+                ]),
+                
             elif pathname == "/Weather":
                 return html.Div([
                     html.H1('Weather Analysis Report'),
@@ -127,16 +139,29 @@ class App:
             )
         
         @self.app.callback(
+            Output('tabs2-content', 'children'),
+            Input('tabs2', 'value')
+         )
+        def render_content_two(tab):
+            if tab == 'tab0-1':
+                fig =EsrAnalysis().create_export_country_plot()
+                return  dcc.Graph(figure = fig)
+
+            else:
+                fig = EsrAnalysis().create_export_weekly_plot()
+                return dcc.Graph(figure = fig)
+        
+        @self.app.callback(
             Output('tabs0-content', 'children'),
             Input('tabs0', 'value')
          )
         def render_content_zero(tab):
             if tab == 'tab0-1':
-                fig = WeatherAnalysis('./Weather_quote/weather_quote.csv').create_precipitation_plot()
+                fig = WeatherAnalysis().create_precipitation_plot()
                 return  dcc.Graph(figure = fig)
 
             else:
-                fig = WeatherAnalysis('./Weather_quote/weather_quote.csv').create_temperature_plot()
+                fig = WeatherAnalysis().create_temperature_plot()
                 return dcc.Graph(figure = fig)
 
 
@@ -256,7 +281,7 @@ class App:
             Input("toggle-rangeslider", "value"),
         )
         def display_corn_chart(value):
-            fig = MachineLearning('./Corn_quote/corn_quote.csv').analyze_stock_prices(value)
+            fig = MachineLearning().analyze_stock_prices(value)
             return fig
         @self.app.callback(
             Output('eval-chart', 'figure'),
@@ -268,7 +293,7 @@ class App:
             if n_clicks is None:
                 return no_update
             else :
-                fig = MachineLearning('./Corn_quote/corn_quote.csv').train_model(num_epoch, optimizer)
+                fig = MachineLearning().train_model(num_epoch, optimizer)
             return fig
     
         @self.app.callback(
@@ -281,7 +306,7 @@ class App:
             if n_clicks is None:
                 return no_update
             else:
-                fig = MachineLearning('./Corn_quote/corn_quote.csv').forecast_stock_prices(days, weight)
+                fig = MachineLearning().forecast_stock_prices(days, weight)
                 return fig
         
     def run(self, debug = False):

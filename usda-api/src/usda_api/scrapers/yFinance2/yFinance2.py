@@ -35,12 +35,12 @@ class yFinance2:
         return
                      
     def extract_ticker(self):
-        dir = f'./extract_yfinance'
+        dir = f'./data/extract_yfinance'
         self.extract("2000-08-30", dir)
         return dir
     
     def extract_ticker_weekly(self):
-        dir = f'./extract_yfinance_weekly'
+        dir = f'./data/extract_yfinance_weekly'
         start_date = str(datetime.now().date() - timedelta(days= 7))
         self.extract(start_date, dir)
         return dir
@@ -62,12 +62,12 @@ class yFinance2:
         return path2
     
     def transform_ticker(self, path):
-        dir = f'./transform_yfinance'
+        dir = f'./data/transform_yfinance'
         path2 = self.transform(path, dir)
         return path2
     
     def transform_ticker_weekly(self, path):
-        dir = f'./transform_yfinance_weekly'
+        dir = f'./data/transform_yfinance_weekly'
         path2 = self.transform(path, dir)
         return path2
     
@@ -125,9 +125,9 @@ class yFinance2:
                                              SELECT "Date", "Open", "Close", "High", "Low", "Volume" From yfinance WHERE "Ticker_name" ='Corn'
                                              """)
         df = pd.DataFrame(yfinance_table.fetchall(), columns=yfinance_table.keys())
-        os.makedirs('./Corn_quote', exist_ok=True)
-        df.to_csv('./Corn_quote/corn_quote.csv', index = False)
-        return './Corn_quote/corn_quote.csv'
+        os.makedirs('./data/Corn_quote', exist_ok=True)
+        df.to_csv('./data/Corn_quote/corn_quote.csv', index = False)
+        return './data/Corn_quote/corn_quote.csv'
     
     def transform_ticker_oil(self):
         #metadata = MetaData()
@@ -140,9 +140,9 @@ class yFinance2:
                                              SELECT "Date", "Open", "Close", "High", "Low", "Volume" From yfinance WHERE "Ticker_name" ='Oil'
                                              """)
         df = pd.DataFrame(yfinance_table.fetchall(), columns=yfinance_table.keys())
-        os.makedirs('./Ethanol_quote', exist_ok=True)
-        df.to_csv('./Ethanol_quote/oil_quote.csv', index = False)
-        return './Ethanol_quote/oil_quote.csv'
+        os.makedirs('./data/Ethanol_quote', exist_ok=True)
+        df.to_csv('./data/Ethanol_quote/oil_quote.csv', index = False)
+        return './data/Ethanol_quote/oil_quote.csv'
         
 if __name__=='__main__':
     ydata = yFinance2()

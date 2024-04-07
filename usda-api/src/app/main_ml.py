@@ -30,10 +30,10 @@ from dash import Dash, Input, Output
 
 
 class MachineLearning:
-    def __init__(self, path):
+    def __init__(self):
         #obj_yfinance  = yFinance2()
-        self.path = path
-        stock_data_path = path #obj_yfinance.get_csv_path()
+        self.path = '../data/Corn_quote/corn_quote.csv'
+        stock_data_path = '../data/Corn_quote/corn_quote.csv'#obj_yfinance.get_csv_path()
         df = pd.read_csv(stock_data_path, parse_dates = ['Date'])
         df.Date = pd.to_datetime(df.Date, utc = False)
         df.sort_values(by='Date', ascending=True, inplace = True)

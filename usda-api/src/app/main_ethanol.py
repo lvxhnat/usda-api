@@ -9,7 +9,7 @@ import pandas as pd
 
 class Ethanol:
     def __init__(self):
-        data_frame = pd.read_csv('./Ethanol_quote/eia_quote.csv', parse_dates=['Date'])
+        data_frame = pd.read_csv('../data/Ethanol_quote/eia_quote.csv', parse_dates=['Date'])
         data_frame.Date = pd.to_datetime(data_frame.Date)
         self.df = data_frame
 

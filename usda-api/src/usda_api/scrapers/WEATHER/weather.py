@@ -78,13 +78,13 @@ class WEATHER:
         return f'{dir}/extract_weather.csv'
     
     def extract_weather(self):
-        dir = './extract_weather'
+        dir = './data/extract_weather'
         start = "2010-01-01"
         path = self.extract(start, dir)
         return path
     
     def extract_weather_weekly(self):
-        dir = './extract_weather_weekly'
+        dir = './data/extract_weather_weekly'
         start = date.today().strftime('%Y-%m-%d')
         path = self.extract(start, dir)
         return path
@@ -92,7 +92,7 @@ class WEATHER:
     
     
     def transform_weather(self, path):
-        dir = 'transform_weather'
+        dir = './data/transform_weather'
         os.makedirs(dir, exist_ok = True)
         df = pd.read_csv(path)
         df.date = pd.to_datetime(df.date, utc = False)
@@ -171,9 +171,9 @@ class WEATHER:
                                             """) 
         
         df = pd.DataFrame(weekly_temperature.fetchall(), columns=weekly_temperature.keys())
-        os.makedirs('Weather_quote', exist_ok= True)
-        df.to_csv('./Weather_quote/weather_quote.csv', index = False)
-        return'./Weather_quote/weather_qutoe.csv'
+        os.makedirs('./data/Weather_quote', exist_ok= True)
+        df.to_csv('./data/Weather_quote/weather_quote.csv', index = False)
+        return'./data/Weather_quote/weather_quote.csv'
         
 
 if __name__ == "__main__":
