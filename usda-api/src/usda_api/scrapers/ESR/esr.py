@@ -127,7 +127,7 @@ class ESR:
             lambda x: self.commodity_id_to_name[x])
         exportsdf['Country'] = exportsdf.countryCode.apply(
             lambda x: mapCountries[x])
-        exportsdf = exportsdf[['Commodity', 'Country', 'weeklyExports', 'weekEndingDate']]
+        exportsdf = exportsdf[['Commodity', 'Country', 'weeklyExports', 'weekEndingDate',  'grossNewSales']]
 
         exportsdf.Country = exportsdf.Country.apply(
             lambda x: x.strip())  # Formatting dates and country spacing
@@ -169,6 +169,7 @@ class ESR:
             Column('Country', String, primary_key=True),
             Column('Commodity', String),
             Column('weeklyExports', Integer),
+            Column('grossNewSales', Integer),
         ]
 
         table = Table('esr', metadata, *columns, PrimaryKeyConstraint('Date', 'Country'))

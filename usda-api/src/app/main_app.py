@@ -31,7 +31,7 @@ class App:
                 dbc.Nav(
                     [
                         dbc.NavLink("Home", href="/", active="exact"),
-                        dbc.NavLink("Corn Export", href="/Corn_Export", active="exact"),
+                        dbc.NavLink("Corn Sales", href="/Corn_Sales", active="exact"),
                         dbc.NavLink("Weather", href="/Weather", active="exact"),
                         dbc.NavLink("Ethanol", href="/Ethanol", active="exact"),
                         dbc.NavLink("LSTM analysis", href="/LSTM_analysis", active="exact"),
@@ -91,12 +91,12 @@ class App:
                     'height': '100vh',
                     'position': 'relative',  # Needed to position the overlay correctly
                 })]
-            elif pathname == "/Corn_Export":
+            elif pathname == "/Corn_Sales":
                 return html.Div([
-                    html.H1('Corn Export Report'),
+                    html.H1('Corn Sales Report'),
                     dcc.Tabs(id='tabs2', value = 'tab0-1', children= [
-                        dcc.Tab(label='Export Contries Analysis', value='tab0-1'),
-                        dcc.Tab(label= 'Weekly Export Analysis', value = 'tab0-2')
+                        dcc.Tab(label='Export Contries Sales Analysis', value='tab0-1'),
+                        dcc.Tab(label= 'Weekly Sales Analysis', value = 'tab0-2')
                     ]),
                     html.Div(id='tabs2-content')
                 ]),
