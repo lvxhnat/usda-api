@@ -130,19 +130,37 @@ class yFinance2:
         return './data/Corn_quote/corn_quote.csv'
     
     def transform_ticker_oil(self):
-        #metadata = MetaData()
-        #metadata = MetaData(bind = self.engine)
         
-        # yfinance_table = Table('yfinance', metadata, autoload = True, autoload_with=self.engine)
-        # statement = select([yfinance_table.c.Open, yfinance_table.c.Close, yfinance_table.c.High, yfinance_table.c.Low, yfinance_table.c.Volume]) \
-        #     .where(yfinance_table.c.Ticker == 'Corn')
         yfinance_table = self.engine.execute(  """
                                              SELECT "Date", "Open", "Close", "High", "Low", "Volume" From yfinance WHERE "Ticker_name" ='Oil'
+                                             WHERE "Date" BETWEEN (NOW() - INTERVAL '1 year')::DATE AND NOW()::DATE
                                              """)
         df = pd.DataFrame(yfinance_table.fetchall(), columns=yfinance_table.keys())
-        os.makedirs('./data/Ethanol_quote', exist_ok=True)
-        df.to_csv('./data/Ethanol_quote/oil_quote.csv', index = False)
-        return './data/Ethanol_quote/oil_quote.csv'
+        os.makedirs('./data/Oil_quote', exist_ok=True)
+        df.to_csv('./data/Oil_quote/oil_quote.csv', index = False)
+        return './data/Oil_quote/oil_quote.csv'
+    
+    def transform_ticker_usd(self):
+    
+        yfinance_table = self.engine.execute(  """
+                                             SELECT "Date", "Open", "Close", "High", "Low", "Volume" From yfinance WHERE "Ticker_name" ='USD'
+                                             WHERE "Date" BETWEEN (NOW() - INTERVAL '1 year')::DATE AND NOW()::DATE
+                                             """)
+        df = pd.DataFrame(yfinance_table.fetchall(), columns=yfinance_table.keys())
+        os.makedirs('./data/Usd_quote', exist_ok=True)
+        df.to_csv('./data/Usd_quote/usd_quote.csv', index = False)
+        return './data/Usd_quote/usd_quote.csv'
+    
+    def transform_ticker_gas(self):
+    
+        yfinance_table = self.engine.execute(  """
+                                             SELECT "Date", "Open", "Close", "High", "Low", "Volume" From yfinance WHERE "Ticker_name" ='Gas'
+                                             WHERE "Date" BETWEEN (NOW() - INTERVAL '1 year')::DATE AND NOW()::DATE
+                                             """)
+        df = pd.DataFrame(yfinance_table.fetchall(), columns=yfinance_table.keys())
+        os.makedirs('./data/Gas_quote', exist_ok=True)
+        df.to_csv('./data/Gas_quote/gas_quote.csv', index = False)
+        return './data/Gas_quote/gas_quote.csv'
         
 if __name__=='__main__':
     ydata = yFinance2()

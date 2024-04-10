@@ -1,11 +1,6 @@
 from usda_api.scrapers.yFinance2.yFinance2 import yFinance2
-import gradio as gr
 import pandas as pd
-import matplotlib.pyplot as plt
-import mplfinance as mpf
-from PIL import Image
 from datetime import datetime, timedelta
-import pytz
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 import tensorflow as tf
@@ -19,9 +14,6 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import os
 
-import matplotlib.dates as mdates
-from datetime import datetime
-from matplotlib.ticker import MaxNLocator
 
 import plotly.graph_objects as go
 import plotly
@@ -47,13 +39,13 @@ class MachineLearning:
         self.defualt_weights_path = 'training_1/m.weights.h5'
 
         
-    def reload(self):
-        stock_data_path = self.path #obj_yfinance.get_csv_path()
-        df = pd.read_csv(stock_data_path, parse_dates = ['Date'])
-        df.Date = pd.to_datetime(df.Date)
-        df.sort_values(by='Date', ascending=True, inplace=True)
-        self.data = df
-        return
+    # def reload(self):
+    #     stock_data_path = self.path #obj_yfinance.get_csv_path()
+    #     df = pd.read_csv(stock_data_path, parse_dates = ['Date'])
+    #     df.Date = pd.to_datetime(df.Date)
+    #     df.sort_values(by='Date', ascending=True, inplace=True)
+    #     self.data = df
+    #     return
     
     def analyze_stock_prices(self, period = 'All'):
         
@@ -86,8 +78,9 @@ class MachineLearning:
         current_df.set_index('Date', inplace=True)
         
         fig = make_subplots(rows = 2, cols =1,
-                                            shared_xaxes=True,
-                                            vertical_spacing = 0.01)
+                            shared_xaxes=True,
+                            vertical_spacing = 0.01,
+                            row_heights=[0.85,0.15])
         
         fig.add_trace(go.Candlestick(x=current_df.index,
                                      low = current_df['Low'],

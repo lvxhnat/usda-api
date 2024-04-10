@@ -2,6 +2,7 @@ from main_ml import MachineLearning
 from main_weather import WeatherAnalysis
 from main_ethanol import Ethanol
 from main_esr import EsrAnalysis
+from main_indices import Indices
 from dash import Dash, Input, Output,State, dcc, no_update, html
 import dash_bootstrap_components as dbc
 class App:
@@ -34,6 +35,7 @@ class App:
                         dbc.NavLink("Corn Sales", href="/Corn_Sales", active="exact"),
                         dbc.NavLink("Weather", href="/Weather", active="exact"),
                         dbc.NavLink("Ethanol", href="/Ethanol", active="exact"),
+                        dbc.NavLink("Relevent Indices", href="/Indices", active="exact"),
                         dbc.NavLink("LSTM analysis", href="/LSTM_analysis", active="exact"),
                     ],
                     vertical=True,
@@ -117,7 +119,31 @@ class App:
                     dcc.Graph(figure = Ethanol().create_ethanol_plot())
                     
                     ])
-                
+            
+            elif pathname == '/Indices':
+                return html.Div([
+                    html.H1('Relevent Indices'),
+                    html.Label('Period: '),
+                    dcc.RadioItems(
+                        id = 'toggle-usd',
+                        options = [
+                            {'label' : '1y', 'value': '1y'},
+                            {'label' : '1m', 'value': '1m'},
+                            {'label' : '5d', 'value': '5 days'}
+                        ],
+                        value = '1y',
+                        inline = True,
+                    ),
+                    html.Div([
+                        dcc.Graph(id ='usd-chart'), 
+                    ]),
+                    html.Div([
+                        dcc.Graph(id ='oil-chart'), 
+                    ]),
+                    html.Div([
+                        dcc.Graph(id ='gas-chart'), 
+                    ]),
+                ])
                 
             elif pathname == "/LSTM_analysis":
                 return html.Div([
@@ -164,7 +190,27 @@ class App:
                 fig = WeatherAnalysis().create_temperature_plot()
                 return dcc.Graph(figure = fig)
 
-
+        @self.app.callback(
+            Output('usd-chart', 'figure'),
+            Input('toggle-usd', 'value'),
+        )
+        def display_usd_chart(value):
+            fig = Indices().analyze_usd_prices(value)
+            return fig
+        @self.app.callback(
+            Output('oil-chart', 'figure'),
+            Input('toggle-usd', 'value'),
+        )
+        def display_oil_chart(value):
+            fig = Indices().analyze_oil_prices(value)
+            return fig
+        @self.app.callback(
+            Output('gas-chart', 'figure'),
+            Input('toggle-usd', 'value'),
+        )
+        def display_gas_chart(value):
+            fig = Indices().analyze_gas_prices(value)
+            return fig
         
         @self.app.callback(
             Output('tabs-content', 'children'),
@@ -310,7 +356,7 @@ class App:
                 return fig
         
     def run(self, debug = False):
-        self.app.run_server(debug = debug)
+        self.app.run_server(debug = debug, port = 8080)
     
     
 

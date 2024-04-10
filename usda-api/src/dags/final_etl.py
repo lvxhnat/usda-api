@@ -63,35 +63,45 @@ def etl_final():
         return esr.load_esr_weekly(path)
 
 
-    @task(task_id='transform_yfinance_corn_analysis')
+    @task(task_id='query_yfinance_corn_analysis')
     def transform_yfinance_corn(path):
         yfinance = yFinance2()
         path = yfinance.transform_ticker_corn()
         return path
-    '''@task(task_id='analyse_yfinance_corn')
-    def analyse_yfinance_corn(path):
-        ml = MachineLearning(path)
-        ml.gradio()
-        return '''
+    @task(task_id='query_yfinance_oil_analysis')
+    def transform_yfinance_oil(path):
+        yfinance = yFinance2()
+        path = yfinance.transform_ticker_oil()
+        return path
+    @task(task_id='query_yfinance_usd_analysis')
+    def transform_yfinance_usd(path):
+        yfinance = yFinance2()
+        path = yfinance.transform_ticker_usd()
+        return path
+    @task(task_id='query_yfinance_gas_analysis')
+    def transform_yfinance_gas(path):
+        yfinance = yFinance2()
+        path = yfinance.transform_ticker_gas()
+        return path
 
-    @task(task_id='transfrom_weather_analysis')
+    @task(task_id='query_weather_analysis')
     def transform_weather_analysis(path):
         weather = WEATHER()
         path = weather.transform_weather_analysis()
         return path
-    @task(task_id='transform_ethanol_analysis')
+    @task(task_id='query_ethanol_analysis')
     def transform_ethanol_analysis(path):
         eia = EIA()
         path = eia.query_eia()
         return path
-    @task(task_id ='transform_export_analysis')
+    @task(task_id ='query_export_analysis')
     def transform_export_analysis(path):
         esr = ESR()
         path = esr.query_esr_all()
         path2 = esr.query_esr_yearly()
         return path
 
-    @task(task_id='query')
+    @task(task_id='end')
     def query(*args):
         for i in args:
             print(i)
@@ -110,11 +120,15 @@ def etl_final():
     path2_esr = load_esr_weekly(path_esr)
 
     path_yfinance_corn = transform_yfinance_corn(path3_yfinance)
+    path_yfinance_oil = transform_yfinance_oil(path3_yfinance)
+    path_yfinance_usd = transform_yfinance_usd(path3_yfinance)
+    path_yfinance_gas = transform_yfinance_gas(path3_yfinance)
+    
     path_weather_analysis = transform_weather_analysis(path2_weather)
     path_ethanol_analysis = transform_ethanol_analysis(path2_eia)
     path_export_analysis = transform_export_analysis(path2_esr)
     #analyse_yfinance_corn(path_yfinance_corn)
     
-    query(path_yfinance_corn, path_weather_analysis, path_ethanol_analysis, path_export_analysis)
+    query(path_yfinance_corn,path_yfinance_oil, path_yfinance_usd, path_yfinance_gas, path_weather_analysis, path_ethanol_analysis, path_export_analysis)
 
 etl_dag = etl_final()
