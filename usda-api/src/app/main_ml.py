@@ -14,7 +14,6 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import os
 
-
 import plotly.graph_objects as go
 import plotly
 from plotly.subplots import make_subplots
@@ -25,7 +24,7 @@ class MachineLearning:
     def __init__(self):
         #obj_yfinance  = yFinance2()
         self.path = '../data/Corn_quote/corn_quote.csv'
-        stock_data_path = '../data/Corn_quote/corn_quote.csv'#obj_yfinance.get_csv_path()
+        stock_data_path = '../data/Corn_quote/corn_quote.csv' #obj_yfinance.get_csv_path()
         df = pd.read_csv(stock_data_path, parse_dates = ['Date'])
         df.Date = pd.to_datetime(df.Date, utc = False)
         df.sort_values(by='Date', ascending=True, inplace = True)
@@ -178,16 +177,17 @@ class MachineLearning:
         actual = self.scalar.inverse_transform(valY[:].reshape(-1, 1))
         prediction_2 = self.scalar.inverse_transform(prediction_1[:].reshape(-1,1))
         
+        
         val_1 = self.val.copy(deep=True)
         val_1['Date'] = pd.to_datetime(val_1['Date'], utc=False)
         
         fig = make_subplots()
         fig.add_trace(go.Scatter(x=val_1['Date'].iloc[self.look_back+self.look_next:], y=actual.flatten(),
-                         mode='lines', name='Actual', line=dict(color='orange')))
+                         mode='lines', name='Actual', line=dict(color='red')))
 
         # Prediction data
         fig.add_trace(go.Scatter(x=val_1['Date'].iloc[self.look_back+self.look_next:], y=prediction_2.flatten(),
-                                mode='lines', name='Predict', line=dict(color='lightgreen')))
+                                mode='lines', name='Predict', line=dict(color='green')))
 
         # Update layout with titles and axis labels
         fig.update_layout(title='LSTM Evaluation of Closing Price',
@@ -198,7 +198,22 @@ class MachineLearning:
                             nticks=5,  # Adjust the number of ticks as needed
                             tickformat='%d, %b, %Y'  # Date format
                         ))
-        return  fig
+        
+        from sklearn.metrics import mean_absolute_error
+        mae = mean_absolute_error(valY, prediction_1)
+        data = {'Metric': ['Mean Absolute Error'], 'Value' : [mae]}
+        mae_df = pd.DataFrame(data)
+        fig2 = make_subplots()
+        fig2.add_trace(go.Table(
+            header = dict(values=list(mae_df.columns), fill_color = 'lightblue', align='left'),
+            cells = dict(values=[mae_df.Metric, mae_df.Value], fill_color='white', align='left'),
+        ))
+        fig2.update_layout(
+            title= 'LSTM Evaluation Metrics',
+            height = 300,
+        )
+        
+        return  fig, fig2
     
     def train_model(self, num_epoch, optimizer):
         img = self.evaluate(num_epoch, optimizer)
@@ -255,4 +270,4 @@ class MachineLearning:
     
         
 if __name__ == '__main__':
-    ml = MachineLearning('./Corn_quote/corn_quote.csv')
+    ml = MachineLearning('./Corn_quote/corn_quote.csv') 

@@ -36,7 +36,8 @@ class App:
                         dbc.NavLink("Weather", href="/Weather", active="exact"),
                         dbc.NavLink("Ethanol", href="/Ethanol", active="exact"),
                         dbc.NavLink("Relevent Indices", href="/Indices", active="exact"),
-                        dbc.NavLink("LSTM analysis", href="/LSTM_analysis", active="exact"),
+                        dbc.NavLink("XGBoost Analysis", href="/XGBoost_analysis", active="exact"),
+                        dbc.NavLink("LSTM Analysis", href="/LSTM_analysis", active="exact"),
                     ],
                     vertical=True,
                     pills=True,
@@ -145,6 +146,17 @@ class App:
                     ]),
                 ])
                 
+            elif pathname == '/XGBoost_analysis':
+                return html.Div(
+                    children = [
+                    html.H1('Machine Learning with XGBoost'),
+                    dcc.Tabs(id='tabs3', value = 'tab3-1',children = [
+                        dcc.Tab(label='XGBoost Prediction', value = 'tab3-1'),
+                        dcc.Tab(label = 'Feature Importance', value = 'tab3-2'),
+                    ]),
+                    html.Div(id = 'tabs3-content')
+                ])
+                
             elif pathname == "/LSTM_analysis":
                 return html.Div([
                     html.H1('Machine Learning with LSTM'),
@@ -211,6 +223,23 @@ class App:
         def display_gas_chart(value):
             fig = Indices().analyze_gas_prices(value)
             return fig
+        
+        
+        @self.app.callback(
+            Output('tabs3-content', 'children'),
+            Input('tabs3', 'value')
+        )
+        def xgboost_analysis(value):
+            if value == 'tab3-1':
+                return html.Div([
+                    html.Img(src = self.app.get_asset_url("xgb_chart.png"), style={'display': 'block', 'margin': 'auto'}),
+                    html.Img(src = self.app.get_asset_url("xgb_eval.png"), style={'display': 'block', 'margin': 'auto'}),
+                    ])
+            else:
+                return html.Div([
+                    html.Img(src = self.app.get_asset_url("xgb_importance.png"), style={'display': 'block', 'margin': 'auto', 'height': '60vh'}),
+                ])
+        
         
         @self.app.callback(
             Output('tabs-content', 'children'),
@@ -283,6 +312,7 @@ class App:
                             }),
                     
                     dcc.Graph(id='eval-chart'),
+                    dcc.Graph(id ='eval-table'),
                     
                 ])
             else:
@@ -330,17 +360,17 @@ class App:
             fig = MachineLearning().analyze_stock_prices(value)
             return fig
         @self.app.callback(
-            Output('eval-chart', 'figure'),
+            [Output('eval-chart', 'figure'),
+             Output('eval-table', 'figure')],
             Input('train', 'n_clicks'),
             [State('toggle-epoch', 'value'),
             State('toggle-optimizer', 'value')]
         )
         def evaluate(n_clicks, num_epoch, optimizer):
             if n_clicks is None:
-                return no_update
+                return MachineLearning().train_model(0, 'ADAM')
             else :
-                fig = MachineLearning().train_model(num_epoch, optimizer)
-            return fig
+                return MachineLearning().train_model(num_epoch, optimizer)
     
         @self.app.callback(
             Output('forecast-chart', 'figure'),
@@ -359,7 +389,7 @@ class App:
         self.app.run_server(debug = debug, port = 8080)
     
     
-#testing
+
 
 if __name__ == '__main__':
     app = App()
