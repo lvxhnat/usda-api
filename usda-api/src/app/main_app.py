@@ -232,8 +232,8 @@ class App:
         def xgboost_analysis(value):
             if value == 'tab3-1':
                 return html.Div([
-                    html.Img(src = self.app.get_asset_url("xgb_chart.png"), style={'display': 'block', 'margin': 'auto'}),
-                    html.Img(src = self.app.get_asset_url("xgb_eval.png"), style={'display': 'block', 'margin': 'auto'}),
+                    html.Img(src = self.app.get_asset_url("xgb_chart.png"), style={'display': 'block', 'margin': 'auto', 'height': '60vh'}),
+                    html.Img(src = self.app.get_asset_url("xgb_eval.png"), style={'display': 'block', 'margin': 'auto', 'height': '30vh'}),
                     ])
             else:
                 return html.Div([
