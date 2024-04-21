@@ -1,0 +1,2 @@
+Date,Commodity_Code,Country_Code,Area_Harvested_1000_HA,Beginning_Stocks_1000_MT,Domestic_Consumption_1000_MT,Ending_Stocks_1000_MT,Exports_1000_MT,FSI_Consumption_1000_MT,Feed_Dom_Consumption_1000_MT,Imports_1000_MT,Production_1000_MT,TY_Exports_1000_MT,TY_Imp_from_US_1000_MT,TY_Imports_1000_MT,Total_Distribution_1000_MT,Total_Supply_1000_MT,Yield_MT_per_HA
+2023-04-01,0440000,US,35011.0,34551.0,317642.0,53896.0,53342.0,172855.0,144787.0,635.0,389694.0,54000.0,0.0,600.0,424880.0,424880.0,11.1306
