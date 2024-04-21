@@ -20,7 +20,7 @@ default_args = {
 }
 
 @dag(dag_id='is3107_psd_v3', default_args = default_args, schedule = None, catchup = False, tags=['is3107'])
-def taskflow_api():
+def etl_psd():
     @task(task_id = 'extract_general_information', multiple_outputs=True)
     def extract_general_information():
         info = {
@@ -129,4 +129,4 @@ def taskflow_api():
                     table_created=table_created)
 
 
-taskflow_dag = taskflow_api()
+taskflow_dag = etl_psd()
