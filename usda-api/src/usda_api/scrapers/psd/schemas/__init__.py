@@ -1,4 +1,4 @@
-from usda_api.scrapers.psd.schemas.response import {
+from usda_api.scrapers.psd.schemas.response import (
     PSDDataReleaseDates,
     PSDRegionsType,
     PSDCommoditiesType,
@@ -6,4 +6,4 @@ from usda_api.scrapers.psd.schemas.response import {
     PSDCommoditiesDataType,
     PSDUnitsOfMeasure,
     PSDCommodityAttributes,
-}
+)
