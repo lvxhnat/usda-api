@@ -108,6 +108,8 @@ def etl_final():
 
     @task(task_id = 'get_commodity_data_raw_weekly')
     def get_commodity_data_raw_weekly(target_commodity, target_country):
+        USDA_FAS_API_KEY_0="f5458abd-198d-402b-b75e-3ce48527b0d2"
+        psd = PSD(USDA_FAS_API_KEY_0)
         commodity_dict = psd.extract_commodities_data()
         country_dict = psd.extract_countries_data()
         commodity_code = commodity_dict[target_commodity]
@@ -118,6 +120,8 @@ def etl_final():
 
     @task(task_id = 'get_commodity_data_ts_weekly')
     def get_commodity_data_ts_weekly(commodity_data_raw):
+        USDA_FAS_API_KEY_0="f5458abd-198d-402b-b75e-3ce48527b0d2"
+        psd = PSD(USDA_FAS_API_KEY_0)
         unitsOfMeasure = psd.extract_unitsOfMeasure()
         commodityAttributes = psd.extract_commodityAttributes()
         df1 = pd.merge(commodity_data_raw, unitsOfMeasure, on='unit_id', how='inner')
@@ -144,7 +148,8 @@ def etl_final():
     
 
     @task(task_id='load_psd_data_weekly')
-    def load_psd_data_weekly(psd_data, engine):
+    def load_psd_data_weekly(psd_data):
+        engine = create_engine('postgresql://postgres:Password*1@35.239.18.20/is3107')
         metadata = MetaData()
         table = Table('psd', metadata, autoload=True, autoload_with=engine)
         data_frame = deepcopy(psd_data)
@@ -189,13 +194,10 @@ def etl_final():
     path_ethanol_analysis = transform_ethanol_analysis(path2_eia)
     path_export_analysis = transform_export_analysis(path2_esr)
     
-    USDA_FAS_API_KEY_0="f5458abd-198d-402b-b75e-3ce48527b0d2"
-    psd = PSD(USDA_FAS_API_KEY_0)
-    engine = create_engine('postgresql://postgres:Password*1@35.239.18.20/is3107')
     commodity_data_raw = get_commodity_data_raw_weekly(target_commodity='Corn',
                                                        target_country='United States')
-    commodity_data_ts = get_commodity_data_ts_weekly(commdity_data_raw=commodity_data_raw)
-    load_weekly_psd = load_psd_data_weekly(psd_data=commodity_data_ts, engine=engine)
+    commodity_data_ts = get_commodity_data_ts_weekly(commodity_data_raw=commodity_data_raw)
+    load_weekly_psd = load_psd_data_weekly(psd_data=commodity_data_ts)
     
     query(path_yfinance_corn,path_yfinance_oil, path_yfinance_usd, path_yfinance_gas, path_weather_analysis, path_ethanol_analysis, path_export_analysis, load_weekly_psd)
 
