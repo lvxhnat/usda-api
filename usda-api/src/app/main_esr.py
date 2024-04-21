@@ -4,6 +4,8 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import datetime 
+
 class EsrAnalysis:
     def __init__(self):
         data_frame = pd.read_csv('../data/Esr_quote/esr_quote.csv', parse_dates= ['Date'])
@@ -39,6 +41,21 @@ class EsrAnalysis:
                         'yanchor':'top',
                         'x':0.5},)
         return fig
+    
+    def create_top_10_country_plot(self):
+        df = self.df
+        
+        previous_year = (datetime.datetime.today() - datetime.timedelta(days=365)).strftime('%Y-%m-%d')
+        df_year = df[df['Date'] >= previous_year]
+        df_year = df_year[df_year['Country'] != "UNKNOWN"]
+        df_year = df_year[['Country', 'grossNewSales']]
+        country_sales = df_year.groupby('Country')['grossNewSales'].sum().reset_index()
+        top_countries = country_sales.nlargest(10, 'grossNewSales')
+        fig_year = px.bar(top_countries, x='Country', y='grossNewSales', color='Country',
+                    title='Top 10 Countries by Sales over the Past Year')
+        fig_year.update_layout(xaxis_title='Country', yaxis_title='Total Sales (Metric Tons)')
+        
+        return fig_year
     
     def create_export_weekly_plot(self):
         df = self.df

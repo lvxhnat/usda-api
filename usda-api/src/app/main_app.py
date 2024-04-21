@@ -183,7 +183,12 @@ class App:
         def render_content_two(tab):
             if tab == 'tab0-1':
                 fig =EsrAnalysis().create_export_country_plot()
-                return  dcc.Graph(figure = fig)
+                fig2 = EsrAnalysis().create_top_10_country_plot()
+                return  html.Div([
+                    dcc.Graph(figure = fig),
+                    html.Br(),
+                    dcc.Graph(figure = fig2),
+                ])
 
             else:
                 fig = EsrAnalysis().create_export_weekly_plot()
