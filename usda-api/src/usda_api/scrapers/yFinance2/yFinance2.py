@@ -23,7 +23,7 @@ class yFinance2:
         self.TICKER = TICKER
         #self.credentials = service_account.Credentials.from_service_account_file('/Users/jiayuan/Desktop/project/usda-api/src/usda_api/scrapers/google.json') #
         #self.project_id = 'airflow-418412' #
-        self.engine = create_engine('postgresql://postgres:Password*1@35.239.18.20/jy')
+        self.engine = create_engine('postgresql://postgres:Password*1@35.239.18.20/is3107')
     
     ##EXTRACT##
     def extract(self, start, dir):
@@ -133,7 +133,7 @@ class yFinance2:
         
         yfinance_table = self.engine.execute(  """
                                              SELECT "Date", "Open", "Close", "High", "Low", "Volume" From yfinance WHERE "Ticker_name" ='Oil'
-                                             WHERE "Date" BETWEEN (NOW() - INTERVAL '1 year')::DATE AND NOW()::DATE
+                                             AND "Date" BETWEEN (NOW() - INTERVAL '1 year')::DATE AND NOW()::DATE
                                              """)
         df = pd.DataFrame(yfinance_table.fetchall(), columns=yfinance_table.keys())
         os.makedirs('./data/Oil_quote', exist_ok=True)
@@ -144,7 +144,7 @@ class yFinance2:
     
         yfinance_table = self.engine.execute(  """
                                              SELECT "Date", "Open", "Close", "High", "Low", "Volume" From yfinance WHERE "Ticker_name" ='USD'
-                                             WHERE "Date" BETWEEN (NOW() - INTERVAL '1 year')::DATE AND NOW()::DATE
+                                             AND "Date" BETWEEN (NOW() - INTERVAL '1 year')::DATE AND NOW()::DATE
                                              """)
         df = pd.DataFrame(yfinance_table.fetchall(), columns=yfinance_table.keys())
         os.makedirs('./data/Usd_quote', exist_ok=True)
@@ -155,7 +155,7 @@ class yFinance2:
     
         yfinance_table = self.engine.execute(  """
                                              SELECT "Date", "Open", "Close", "High", "Low", "Volume" From yfinance WHERE "Ticker_name" ='Gas'
-                                             WHERE "Date" BETWEEN (NOW() - INTERVAL '1 year')::DATE AND NOW()::DATE
+                                             AND "Date" BETWEEN (NOW() - INTERVAL '1 year')::DATE AND NOW()::DATE
                                              """)
         df = pd.DataFrame(yfinance_table.fetchall(), columns=yfinance_table.keys())
         os.makedirs('./data/Gas_quote', exist_ok=True)

@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 class EIA:
     def __init__(self):
         self.endpoint = "https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=pet&s=w_epooxe_yop_nus_mbbld&f=w"
-        self.engine = create_engine('postgresql://postgres:Password*1@35.239.18.20/jy')
+        self.engine = create_engine('postgresql://postgres:Password*1@35.239.18.20/is3107')
         
     def generate_request(self):
         info = requests.get(self.endpoint)

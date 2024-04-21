@@ -27,7 +27,7 @@ class WEATHER:
         self.data_frame = pd.DataFrame()
         #self.credentials = service_account.Credentials.from_service_account_file('/Users/jiayuan/Desktop/project/usda-api/src/usda_api/scrapers/google.json')
         #self.project_id = 'airflow-418412'
-        self.engine = create_engine('postgresql://postgres:Password*1@35.239.18.20/jy')
+        self.engine = create_engine('postgresql://postgres:Password*1@35.239.18.20/is3107')
         
     # Setup the Open-Meteo API client with cache and retry on error
     def extract(self, start,dir):

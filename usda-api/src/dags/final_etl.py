@@ -14,7 +14,7 @@ default_args = {
     'retry_delay': timedelta(minutes=0.1)  # Changed 'retry_interval' to 'retry_delay'
 }
 
-@dag(dag_id='etl_final', default_args=default_args, catchup=False, schedule=None)
+@dag(dag_id='etl_final', default_args=default_args, catchup=False, schedule='@weekly')
 def etl_final():
     
     @task(task_id=f'extract_yfinance_weekly')

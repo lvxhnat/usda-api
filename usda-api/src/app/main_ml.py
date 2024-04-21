@@ -270,4 +270,5 @@ class MachineLearning:
     
         
 if __name__ == '__main__':
-    ml = MachineLearning('./Corn_quote/corn_quote.csv') 
+    ml = MachineLearning() 
+    ml.train_model(250, 'SGD')
