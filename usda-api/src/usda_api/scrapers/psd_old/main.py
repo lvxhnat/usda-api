@@ -2,7 +2,7 @@ import requests
 from datetime import datetime
 from typing import Callable, List
 
-from usda_api.scrapers.psd.schemas.response import (
+from usda_api.scrapers.psd_old.schemas.response import (
     PSDCountriesType,
     PSDCountriesCleanedType,
     PSDCommoditiesType,
