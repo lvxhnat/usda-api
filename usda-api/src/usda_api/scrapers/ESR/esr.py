@@ -33,7 +33,7 @@ class ESR:
         self.commodity_id_to_name = commodities_for_query.set_index(
             "commodityCode")[['commodityName']].to_dict()['commodityName']
         
-        self.engine = create_engine('postgresql://postgres:Password*1@35.239.18.20/jy')
+        self.engine = create_engine('postgresql://postgres:Password*1@35.239.18.20/is3107')
 
 
     def get_commodity_id(self, commodity) -> np.int64:
