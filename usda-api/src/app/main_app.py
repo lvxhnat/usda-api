@@ -37,7 +37,7 @@ class App:
                         dbc.NavLink("Corn Sales", href="/Corn_Sales", active="exact"),
                         dbc.NavLink("Weather", href="/Weather", active="exact"),
                         dbc.NavLink("Ethanol", href="/Ethanol", active="exact"),
-                        dbc.NavLink("Relevent Indices", href="/Indices", active="exact"),
+                        dbc.NavLink("Relevant Indices", href="/Indices", active="exact"),
                         dbc.NavLink("XGBoost Analysis", href="/XGBoost_analysis", active="exact"),
                         dbc.NavLink("LSTM Analysis", href="/LSTM_analysis", active="exact"),
                     ],
