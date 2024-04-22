@@ -106,6 +106,18 @@ class App:
                     html.Div(id='tabs2-content')
                 ]),
                 
+            elif pathname == "/Forecast":
+                return html.Div([
+                    html.H1("US Corn Information Forecast"),
+                    dcc.Tabs(id='tabs_psd', value = 'tab0-1', children = [
+                        dcc.Tab(label='General', value='tab0-1'),
+                        dcc.Tab(label='Production vs Consumption', value='tab0-2'),
+                        dcc.Tab(label='Inventory', value='tab0-3'),
+                        dcc.Tab(label='Exports and Imports', value='tab0-4'),
+                    ]),
+                    html.Div(id='tabs_psd-content')
+                ])
+
             elif pathname == "/Weather":
                 return html.Div([
                     html.H1('Weather Analysis Report'),
@@ -177,6 +189,44 @@ class App:
                     html.P(f"The pathname {pathname} was not recognised..."),
                 ]
             )
+
+        @self.app.callback(
+            Output('tabs_psd-content', 'children'),
+            Input('tabs_psd', 'value')
+        )
+        def render_psd_content(tab):       
+            if tab == 'tab0-1':
+                fig1 = PSDAnalysis().area_harvested_plot()
+                fig2 = PSDAnalysis().yield_plot()
+                fig3 = PSDAnalysis().total_distribution_plot()
+                return html.Div([
+                    dcc.Graph(figure = fig1),
+                    html.Br(),
+                    dcc.Graph(figure = fig2),
+                    html.Br(),
+                    dcc.Graph(figure = fig3),
+                ])
+            elif tab == 'tab0-2':
+                fig1 = PSDAnalysis().production_vs_domestic_consumption_plot()
+                fig2 = PSDAnalysis().production_vs_fsi_consumption_plot()
+                fig3 = PSDAnalysis().production_vs_feed_dom_consumption_plot()
+                return html.Div([
+                    dcc.Graph(figure = fig1),
+                    html.Br(),
+                    dcc.Graph(figure = fig2),
+                    html.Br(),
+                    dcc.Graph(figure = fig3),
+                ])
+            elif tab == 'tab0-3':
+                fig1 = PSDAnalysis().inventory_plot()
+                return html.Div([
+                    dcc.Graph(figure = fig1),
+                ])
+            else:
+                fig1 = PSDAnalysis().export_import_plot()
+                return html.Div([
+                    dcc.Graph(figure = fig1),
+                ])
         
         @self.app.callback(
             Output('tabs2-content', 'children'),
