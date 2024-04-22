@@ -3,6 +3,7 @@ from main_weather import WeatherAnalysis
 from main_ethanol import Ethanol
 from main_esr import EsrAnalysis
 from main_indices import Indices
+from main_psd import PSDAnalysis
 from dash import Dash, Input, Output,State, dcc, no_update, html
 import dash_bootstrap_components as dbc
 class App:
@@ -33,6 +34,7 @@ class App:
                     [
                         dbc.NavLink("Home", href="/", active="exact"),
                         dbc.NavLink("Corn Sales", href="/Corn_Sales", active="exact"),
+                        dbc.NavLink("Forecast", href="/Forecast", active="exact"),
                         dbc.NavLink("Weather", href="/Weather", active="exact"),
                         dbc.NavLink("Ethanol", href="/Ethanol", active="exact"),
                         dbc.NavLink("Relevent Indices", href="/Indices", active="exact"),
