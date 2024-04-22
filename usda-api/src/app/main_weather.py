@@ -19,7 +19,7 @@ class WeatherAnalysis:
         'Iowa' : 'IA',
         'Indiana' : 'IN',
         'Illinois' : 'IL',
-        'Nebraskda' : 'NE',
+        'Nebraska' : 'NE',
         'South Dakota' : 'SD',
         'Minnesota' : 'MN'
         }
