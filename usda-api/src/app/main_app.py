@@ -33,8 +33,8 @@ class App:
                 dbc.Nav(
                     [
                         dbc.NavLink("Home", href="/", active="exact"),
-                        dbc.NavLink("Corn Sales", href="/Corn_Sales", active="exact"),
                         dbc.NavLink("Forecast", href="/Forecast", active="exact"),
+                        dbc.NavLink("Corn Sales", href="/Corn_Sales", active="exact"),
                         dbc.NavLink("Weather", href="/Weather", active="exact"),
                         dbc.NavLink("Ethanol", href="/Ethanol", active="exact"),
                         dbc.NavLink("Relevent Indices", href="/Indices", active="exact"),
