@@ -81,9 +81,9 @@ class PSDAnalysis:
 
     def total_distribution_plot(self):
         plot = self.general_plot(column = 'Total_Distribution_1000_MT',
-                                 line_label = 'Total Distribution (MT)',
+                                 line_label = 'Total Distribution (1000 MT)',
                                  title = 'Forecast of Total Distribution of Corn in US',
-                                 yaxis = 'Total Distribution (MT)',
+                                 yaxis = 'Total Distribution (1000 MT)',
                                  color = 'green')
         return plot
     
