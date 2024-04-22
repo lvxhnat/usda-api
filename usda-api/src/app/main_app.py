@@ -100,7 +100,7 @@ class App:
                 return html.Div([
                     html.H1('Corn Sales Report'),
                     dcc.Tabs(id='tabs2', value = 'tab0-1', children= [
-                        dcc.Tab(label='Export Contries Sales Analysis', value='tab0-1'),
+                        dcc.Tab(label='Export Countries Sales Analysis', value='tab0-1'),
                         dcc.Tab(label= 'Weekly Sales Analysis', value = 'tab0-2')
                     ]),
                     html.Div(id='tabs2-content')
