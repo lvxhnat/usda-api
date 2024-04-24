@@ -130,6 +130,14 @@ class PSDAnalysis:
                                      color = 'red')
         return plot
     
+    def export_plot(self):
+        plot = self.general_plot(column = 'TY_Exports_1000_MT',
+                                 line_label = 'Exports (1000_MT)',
+                                 title = 'Forecast of Exports',
+                                 yaxis = 'Exports (1000 MT)',
+                                 color = 'blue')
+        return plot
+    
     def export_import_plot(self):
         plot = self.dual_plot(column1 = 'TY_Exports_1000_MT',
                               column2 = 'TY_Imports_1000_MT',
